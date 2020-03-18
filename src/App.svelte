@@ -1,30 +1,106 @@
 <script>
-	export let name;
+	import {Game} from './game';
+
+	const game = new Game();
+	game.init();
+
+	let key;
+	const handleInput = (event) => {
+		key = event.key;
+		switch (key) {
+		case 'ArrowUp':
+		case 'ArrowDown':
+		case 'ArrowLeft':
+		case 'ArrowRight':
+			game.handleInput(key);
+			console.log('grid', game.grid)
+			game.grid = game.grid;
+			return;
+		default:
+			console.log('Not an arrow key', key);
+		}
+	};
+
 </script>
-
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
+	<div class="content">
+		<h1>
+			Welcome to 2048!
+		</h1>
+		<div class="key">{key}</div>
+		<div class="grid">
+			{#each game.grid as rows, i}
+				{#each rows as row, j}
+					<div class="cell">
+						{#if game.grid[i][j] !== 0}
+							{game.grid[i][j]}
+						{/if}
+					</div>
+				{/each}
+			{/each}
+		</div>
+	</div>
+	<div class="footer">
+		<div class="score">
+			<div class="score-title">
+				SCORE
+			</div>
+			<div class="score-number">
+				{game.score}
+			</div>
+		</div>
+	</div>
+	<svelte:window on:keydown={handleInput}/>
 <style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
+	:global(body) {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+    	align-items: center;
+		background-image: url('/tree_bark.png');
 	}
 
 	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
+		color: #615D6C;
+		text-align: center;
 	}
 
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+	.grid {
+		padding: 10px;
+		background: rgb(242,177,121, 0.7);
+		display: grid;
+		grid-gap: 10px;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-auto-rows: 1fr;
+	}
+
+	.cell {
+        background-color: #615D6C;
+        color: #fff;
+        border-radius: 5px;
+		width: 48px;
+		height: 48px;
+        padding: 10px;
+        font-size: 150%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.footer {
+		padding: 10px;
+	}
+
+	.score {
+	    background-color: #fff;
+        color:rgb(242,177,121, 0.7);
+		font-weight: 900;
+        border-radius: 5px;
+		width: 48px;
+		height: 48px;
+        padding: 10px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		align-items: center;
 	}
 </style>

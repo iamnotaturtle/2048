@@ -102,7 +102,7 @@
 		flex-direction: column;
 		justify-content: center;
     	align-items: center;
-		background-image: url('/tree_bark.png');
+		background-image: url('./tree_bark.png');
 	}
 
 	.header {

@@ -1,36 +1,77 @@
+<svelte:head>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css">
+	<script src="https://cdn.jsdelivr.net/npm/swiped-events@1.0.9/src/swiped-events.min.js"></script>
+</svelte:head>
+
 <script>
+	import MakeItRain from './MakeItRain.svelte';
 	import {Game} from './game';
 
-	const game = new Game();
-	game.init();
+	const mobileKeyMap = {
+		'swiped-up': 'ArrowUp',
+		'swiped-down': 'ArrowDown',
+		'swiped-left': 'ArrowLeft',
+		'swiped-right': 'ArrowRight',
+	}
+	const mobileKeys = Object.keys(mobileKeyMap);
 
-	let key;
+	const setupMobile = () => {
+ 		mobileKeys.forEach(eventName => {
+			document.addEventListener(eventName, (event) => {
+				event.key = mobileKeyMap[event.type];
+				handleInput(event);
+			});
+		})
+	}
+	setupMobile();
+
 	const handleInput = (event) => {
-		key = event.key;
-		switch (key) {
+		switch (event.key) {
 		case 'ArrowUp':
 		case 'ArrowDown':
 		case 'ArrowLeft':
 		case 'ArrowRight':
-			game.handleInput(key);
-			console.log('grid', game.grid)
+			game.handleInput(event.key);
 			game.grid = game.grid;
 			return;
 		default:
-			console.log('Not an arrow key', key);
+			return;
 		}
 	};
 
+	const animateCSS = (node, value) => {
+		return {
+			update(value) {
+				if (value === 0) {
+					return;
+				}
+				node.classList.add('animated', 'shake');
+
+				const handleAnimationEnd = () => {
+					node.classList.remove('animated', 'shake');
+					node.removeEventListener('animationend', handleAnimationEnd);
+				};
+				node.addEventListener('animationend', handleAnimationEnd);
+			},
+		};
+	};
+
+	const game = new Game();
+	game.init();
 </script>
 	<div class="content">
-		<h1>
-			Welcome to 2048!
-		</h1>
-		<div class="key">{key}</div>
+		<div class="header">
+			<div class="title">
+				2048
+			</div>
+			<div class="subtitle">
+				Join the tiles to get 2048!
+			</div>
+		</div>
 		<div class="grid">
 			{#each game.grid as rows, i}
 				{#each rows as row, j}
-					<div class="cell">
+					<div class="cell" use:animateCSS={game.grid[i][j]}>
 						{#if game.grid[i][j] !== 0}
 							{game.grid[i][j]}
 						{/if}
@@ -48,7 +89,12 @@
 				{game.score}
 			</div>
 		</div>
-	</div>
+	</div>	
+	{#if game.isWon()}
+		<MakeItRain characters={['🥳', '🎉', '✨', 'Winner']}/>	
+	{:else if game.isOver()}
+		<MakeItRain characters={['💧', '😭', 'Loser']}/>	
+	{/if}
 	<svelte:window on:keydown={handleInput}/>
 <style>
 	:global(body) {
@@ -59,9 +105,19 @@
 		background-image: url('/tree_bark.png');
 	}
 
-	h1 {
+	.header {
+		padding-bottom: 10px;
+	}
+
+	.title {
 		color: #615D6C;
-		text-align: center;
+		font-weight: bold;
+		font-size: xx-large;
+	}
+
+	.subtitle {
+		font-size: medium;
+		color: #615D6C;
 	}
 
 	.grid {

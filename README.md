@@ -10,3 +10,9 @@ yarn
 yarn dev # Develop
 yarn build && yarn start
 ```
+
+## Deploy
+Deploy to `gh-pages` branch
+```
+yarn deploy -f
+```

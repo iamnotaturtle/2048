@@ -2,14 +2,15 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "license": "UNLICENSED",
-  "homepage": "https://iamnotaturtle.github.io/2048/",
+  "homepage": ".",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public",
-    "github": "yarn build && node publish.js",
     "test": "jest src",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "yarn test -- --watch",
+    "predeploy": "yarn build", 
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.0",
